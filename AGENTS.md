@@ -40,7 +40,7 @@ cloud-android-emulator/
 ├── AGENTS.md
 ├── README.md
 ├── package.json
-├── wrangler.toml          # Cloudflare Pages config
+├── wrangler.toml          # Cloudflare Workers static-assets config
 ├── .env.example           # committed, placeholders only
 ├── .env                   # local only, gitignored
 ├── .gitignore

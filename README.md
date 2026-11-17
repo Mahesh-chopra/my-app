@@ -93,7 +93,7 @@ Redroid is a containerized Android, **not a VM**: KVM is not required. It needs 
 Recommended order:
 
 1. Push this project to a free GitHub repo and open it in **Codespaces** (`.devcontainer/devcontainer.json` installs Node + Docker-in-Docker and forwards ports 3000/5555/8000). Run `npm start` and use the forwarded port.
-2. Deploy `public/` to **Cloudflare Pages** with `npm run deploy:pages` (uses `wrangler.toml`; first run prompts for Cloudflare login).
+2. Deploy `public/` to **Cloudflare Workers static assets** with `npm run deploy:pages` (uses `wrangler.toml`; first run prompts for Cloudflare login).
 3. On an **Oracle Always Free Ampere A1 Ubuntu VM**, run `npm run setup:linux`, set `ENABLE_DOCKER=true` and `CORS_ORIGIN=https://<your-pages-subdomain>.pages.dev` in `.env`, then `npm start` behind a TLS reverse proxy.
 
 ### Split frontend ↔ backend wiring
@@ -104,7 +104,7 @@ The frontend supports a configurable API origin. In `public/index.html`:
 <body data-api-base="https://your-backend.example.com">
 ```
 
-Leave it empty when the API is served from the same origin. The backend emits CORS headers only when `CORS_ORIGIN` is set in `.env`; set it to the exact Pages origin (or `*` for a public demo). `npm run deploy:pages` uses `npx wrangler`, so no extra dependency is added.
+Leave it empty when the API is served from the same origin. The backend emits CORS headers only when `CORS_ORIGIN` is set in `.env`; set it to your exact Workers/Pages origin (or `*` for a public demo). `npm run deploy:pages` uses `npx wrangler`, so no extra dependency is added.
 
 The host setup script, redroid image, and ws-scrcpy env-var names are configurable via `.env` (`REDROID_IMAGE`, `WS_SCRCPY_ADB_HOST_ENV`, `WS_SCRCPY_ADB_PORT_ENV`). On ARM64 hosts the default redroid image becomes `redroid/redroid:15.0.0_64only-latest`. Startup runs a non-fatal binder/ashmem preflight when `ENABLE_DOCKER=true`.
 
@@ -122,7 +122,7 @@ cloud-android-emulator/
 ├── AGENTS.md                # contributor/agent rulebook
 ├── README.md
 ├── package.json
-├── wrangler.toml            # Cloudflare Pages config
+├── wrangler.toml            # Cloudflare Workers static-assets config
 ├── .env.example             # committed template
 ├── .env                     # local config (gitignored)
 ├── .gitignore
