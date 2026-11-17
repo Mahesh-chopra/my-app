@@ -1,0 +1,8 @@
+# Cloudflare Pages deployment for the static dashboard.
+# Before deploying, set the backend origin in public/index.html:
+#   <body data-api-base="https://your-backend.example.com">
+# and set CORS_ORIGIN on the backend to your Pages URL.
+
+name = "cloud-android-emulator"
+pages_build_output_dir = "public"
+compatibility_date = "2026-11-17"

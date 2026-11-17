@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Run Android apps in your browser with redroid and ws-scrcpy." />
+    <title>Cloud Android Emulator Runner</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <!-- Set data-api-base to your backend origin (e.g. https://api.example.com) when hosting the UI separately. -->
+  <body data-api-base="">
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">▶</span>
+          <div>
+            <h1>Cloud Android</h1>
+            <p>Browser-based emulator runner</p>
+          </div>
+        </div>
+        <div class="session-pill" id="sessionPill">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="sessionStatus">No active session</span>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel upload-panel" aria-labelledby="uploadTitle">
+          <div class="panel-head">
+            <h2 id="uploadTitle">1. Upload an APK</h2>
+            <span class="muted">max 100 MB</span>
+          </div>
+
+          <div
+            class="dropzone"
+            id="dropzone"
+            role="button"
+            tabindex="0"
+            aria-label="Choose or drop an APK file"
+          >
+            <input
+              type="file"
+              id="apkInput"
+              accept=".apk,application/vnd.android.package-archive"
+              hidden
+            />
+            <div class="dropzone-icon" aria-hidden="true">APK</div>
+            <p class="dropzone-title">Drop your <strong>.apk</strong> here</p>
+            <p class="muted">or click to browse</p>
+          </div>
+
+          <p class="file-info" id="fileInfo" hidden></p>
+          <button class="btn btn-primary btn-block" id="startBtn" type="button" disabled>
+            Start session
+          </button>
+          <p class="error" id="uploadError" role="alert" hidden></p>
+
+          <div class="note" id="mockNote">
+            <strong>Demo mode.</strong> Docker is disabled, so the screen is a placeholder.
+            The API still prepares the redroid + ws-scrcpy commands for inspection.
+          </div>
+        </section>
+
+        <section class="stage" aria-label="Android device viewport">
+          <div class="stage-head">
+            <h2>Device</h2>
+            <div class="timer" id="timer" aria-live="polite">--:--</div>
+          </div>
+
+          <div class="phone-frame">
+            <div class="phone-speaker" aria-hidden="true"></div>
+            <div class="phone-screen" id="phoneScreen">
+              <div class="screen-placeholder" id="screenPlaceholder">
+                <div class="android-glyph" aria-hidden="true">🤖</div>
+                <p id="placeholderTitle">Your Android screen will appear here</p>
+                <span id="placeholderHint">Upload an APK to begin</span>
+              </div>
+              <iframe
+                id="streamFrame"
+                title="Android device stream"
+                allow="autoplay; fullscreen; clipboard-write"
+                hidden
+              ></iframe>
+            </div>
+          </div>
+
+          <p class="stage-caption">9:16 portrait viewport · ws-scrcpy ready</p>
+        </section>
+
+        <section class="panel control-panel" aria-labelledby="controlsTitle">
+          <div class="panel-head">
+            <h2 id="controlsTitle">Controls</h2>
+            <span class="muted">ADB keyevents</span>
+          </div>
+
+          <div class="control-grid">
+            <button class="btn control" type="button" data-action="home" disabled>
+              <span aria-hidden="true">⌂</span> Home
+            </button>
+            <button class="btn control" type="button" data-action="back" disabled>
+              <span aria-hidden="true">‹</span> Back
+            </button>
+            <button class="btn control" type="button" data-action="recent" disabled>
+              <span aria-hidden="true">▤</span> Recent
+            </button>
+            <button class="btn control" type="button" data-action="volumeUp" disabled>
+              <span aria-hidden="true">+</span> Vol up
+            </button>
+            <button class="btn control" type="button" data-action="volumeDown" disabled>
+              <span aria-hidden="true">−</span> Vol down
+            </button>
+            <button class="btn control" type="button" data-action="power" disabled>
+              <span aria-hidden="true">⏻</span> Power
+            </button>
+          </div>
+
+          <button class="btn btn-danger btn-block" id="endBtn" type="button" disabled>
+            End session
+          </button>
+
+          <div class="log" id="log" aria-live="polite" aria-label="Activity log"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>
