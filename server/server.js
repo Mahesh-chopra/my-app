@@ -247,7 +247,7 @@ const pruneTimer = setInterval(async () => {
 }, 60_000);
 pruneTimer.unref();
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Cloud Android Emulator Runner listening on http://localhost:${PORT}`);
   console.log(`Docker execution: ${ENABLE_DOCKER ? 'ENABLED' : 'disabled (mock mode)'}`);
 
