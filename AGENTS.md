@@ -46,6 +46,10 @@ cloud-android-emulator/
 ├── .gitignore
 ├── .devcontainer/
 │   └── devcontainer.json  # Codespaces setup
+├── deploy/
+│   └── oracle/
+│       ├── setup.sh       # Oracle ARM VM: Docker, service, Nginx
+│       └── nginx.conf     # reverse proxy template
 ├── scripts/
 │   └── setup-linux.sh     # Docker + binder/ashmem host prep
 ├── public/

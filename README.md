@@ -94,7 +94,7 @@ Recommended order:
 
 1. Push this project to a free GitHub repo and open it in **Codespaces** (`.devcontainer/devcontainer.json` installs Node + Docker-in-Docker and forwards ports 3000/5555/8000). Run `npm start` and use the forwarded port.
 2. Deploy `public/` to **Cloudflare Workers static assets** with `npm run deploy:pages` (uses `wrangler.toml`; first run prompts for Cloudflare login).
-3. On an **Oracle Always Free Ampere A1 Ubuntu VM**, run `npm run setup:linux`, set `ENABLE_DOCKER=true` and `CORS_ORIGIN=https://<your-pages-subdomain>.pages.dev` in `.env`, then `npm start` behind a TLS reverse proxy.
+3. On an **Oracle Always Free Ampere A1 Ubuntu VM**, follow the Oracle section below. `deploy/oracle/setup.sh` installs Docker + binder/ashmem, enables `ENABLE_DOCKER=true`, starts a systemd service, and configures Nginx.
 
 ### Split frontend ↔ backend wiring
 
@@ -107,6 +107,27 @@ The frontend supports a configurable API origin. In `public/index.html`:
 Leave it empty when the API is served from the same origin. The backend emits CORS headers only when `CORS_ORIGIN` is set in `.env`; set it to your exact Workers/Pages origin (or `*` for a public demo). `npm run deploy:pages` uses `npx wrangler`, so no extra dependency is added.
 
 The host setup script, redroid image, and ws-scrcpy env-var names are configurable via `.env` (`REDROID_IMAGE`, `WS_SCRCPY_ADB_HOST_ENV`, `WS_SCRCPY_ADB_PORT_ENV`). On ARM64 hosts the default redroid image becomes `redroid/redroid:15.0.0_64only-latest`. Startup runs a non-fatal binder/ashmem preflight when `ENABLE_DOCKER=true`.
+
+### Oracle Always Free (permanent backend)
+
+1. **Sign up** at https://cloud.oracle.com — a card is required for a small temporary verification hold. Pick a home region near you.
+2. **Create the VM:** Compute → Instances → Create Instance:
+   - Image: **Ubuntu 22.04/24.04 ARM64 (aarch64)**
+   - Shape: **VM.Standard.A1.Flex**, 2 OCPU / 12 GB RAM (Always Free)
+   - Add your SSH key and assign a public IP.
+3. **Open ports** 80 and 443 in the VCN security list (port 3000 only temporarily, for direct testing).
+4. SSH in and run:
+
+   ```bash
+   curl -O https://raw.githubusercontent.com/Mahesh-chopra/my-app/master/deploy/oracle/setup.sh
+   PUBLIC_HOST=your.public.ip CORS_ORIGIN=https://cloud-android-emulator.legderdeskonline.workers.dev bash setup.sh
+   ```
+
+   The script clones the repo into `~/my-app`, creates `.env` from `.env.example`, pulls the ARM64 redroid image, starts `cloud-android.service`, and configures Nginx (`client_max_body_size 120M`).
+5. **Verify:** `curl http://your.public.ip/api/health` and `sudo systemctl status cloud-android`.
+6. **Point the frontend at it:** set `<body data-api-base="http://your.public.ip">` in `public/index.html`, then run `npm run deploy:pages`. For HTTPS, terminate TLS at Nginx with certbot and use the `https://` URL instead.
+
+> The ws-scrcpy env flags remain a template; confirm them for your chosen image in `server/dockerManager.js`.
 
 ### Production notes
 
@@ -128,8 +149,12 @@ cloud-android-emulator/
 ├── .gitignore
 ├── .devcontainer/
 │   └── devcontainer.json    # GitHub Codespaces setup
+├── deploy/
+│   └── oracle/
+│       ├── setup.sh         # Oracle ARM VM: Docker, service, Nginx
+│       └── nginx.conf       # reverse proxy template
 ├── scripts/
-│   └── setup-linux.sh       # Docker + binder/ashmem host prep
+│   └── setup-linux.sh       # generic Docker + binder/ashmem host prep
 ├── public/
 │   ├── index.html           # dashboard markup + data-api-base
 │   ├── style.css            # responsive layout + 9:16 viewport
