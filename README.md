@@ -104,7 +104,7 @@ The frontend supports a configurable API origin. In `public/index.html`:
 <body data-api-base="https://your-backend.example.com">
 ```
 
-Leave it empty when the API is served from the same origin. The backend emits CORS headers only when `CORS_ORIGIN` is set in `.env`; set it to your exact Workers/Pages origin (or `*` for a public demo). `npm run deploy:pages` uses `npx wrangler`, so no extra dependency is added.
+Leave it empty when the API is served from the same origin. The backend emits CORS headers only when `CORS_ORIGIN` is set in `.env`; set it to your exact Workers/Pages origin (or `*` for a public demo). `npm run deploy:pages` uses a locally pinned Wrangler dev dependency, so deploys don't depend on fetching the latest CLI.
 
 The host setup script, redroid image, and ws-scrcpy env-var names are configurable via `.env` (`REDROID_IMAGE`, `WS_SCRCPY_ADB_HOST_ENV`, `WS_SCRCPY_ADB_PORT_ENV`). On ARM64 hosts the default redroid image becomes `redroid/redroid:15.0.0_64only-latest`. Startup runs a non-fatal binder/ashmem preflight when `ENABLE_DOCKER=true`.
 

@@ -9,7 +9,7 @@
     "dev": "node --watch server/server.js",
     "check": "node --check server/server.js && node --check server/sessionStore.js && node --check server/dockerManager.js && node --check server/adb.js && node --check public/app.js",
     "setup:linux": "bash scripts/setup-linux.sh",
-    "deploy:pages": "npx --yes wrangler@latest deploy"
+    "deploy:pages": "wrangler deploy"
   },
   "dependencies": {
     "dotenv": "^17.0.0",
@@ -18,5 +18,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "wrangler": "^4.138.0"
   }
 }
