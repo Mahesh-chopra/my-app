@@ -108,6 +108,16 @@ Leave it empty when the API is served from the same origin. The backend emits CO
 
 The host setup script, redroid image, and ws-scrcpy env-var names are configurable via `.env` (`REDROID_IMAGE`, `WS_SCRCPY_ADB_HOST_ENV`, `WS_SCRCPY_ADB_PORT_ENV`). On ARM64 hosts the default redroid image becomes `redroid/redroid:15.0.0_64only-latest`. Startup runs a non-fatal binder/ashmem preflight when `ENABLE_DOCKER=true`.
 
+### Windows keepalive (local tunnel)
+
+Cloudflare quick tunnels get a new random URL each time they restart. `deploy/windows/keepalive.ps1` keeps the local API and tunnel running, detects a new URL, redeploys the frontend with it, then restores `public/index.html` to `data-api-base=""`. On this machine it is registered as a Task Scheduler task that runs every 2 minutes:
+
+```powershell
+schtasks /create /tn CloudAndroidEmulatorKeepalive /tr 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Users\chopr\cloud-android-emulator\deploy\windows\keepalive.ps1"' /sc minute /mo 2 /f
+```
+
+Logs are written to `%TEMP%\caer-keepalive.log`. Registration is machine-local and is not part of the repo.
+
 ### Oracle Always Free (permanent backend)
 
 1. **Sign up** at https://cloud.oracle.com — a card is required for a small temporary verification hold. Pick a home region near you.
@@ -150,9 +160,11 @@ cloud-android-emulator/
 ├── .devcontainer/
 │   └── devcontainer.json    # GitHub Codespaces setup
 ├── deploy/
-│   └── oracle/
-│       ├── setup.sh         # Oracle ARM VM: Docker, service, Nginx
-│       └── nginx.conf       # reverse proxy template
+│   ├── oracle/
+│   │   ├── setup.sh         # Oracle ARM VM: Docker, service, Nginx
+│   │   └── nginx.conf       # reverse proxy template
+│   └── windows/
+│       └── keepalive.ps1    # local tunnel self-healing + frontend re-point
 ├── scripts/
 │   └── setup-linux.sh       # generic Docker + binder/ashmem host prep
 ├── public/
